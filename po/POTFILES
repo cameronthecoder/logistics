@@ -1,0 +1,7 @@
+data/com.camerondahl.Logistics.desktop.in
+data/com.camerondahl.Logistics.appdata.xml.in
+data/com.camerondahl.Logistics.gschema.xml
+src/window.ui
+src/main.py
+src/window.py
+

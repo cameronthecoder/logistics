@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=logistics
+Exec=logistics
+Icon=com.camerondahl.Logistics
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true

@@ -1,0 +1,26 @@
+
+using Gtk 4.0;
+using Adw 1;
+
+template ContainersPage :Adw.Bin {
+	Gtk.ScrolledWindow {
+		Adw.Clamp {
+		  styles ["clamp"]
+
+
+		  Gtk.Box {
+		  	orientation: vertical;
+			spacing: 10;
+
+
+
+			Gtk.Label {
+				styles ["heading"]
+				xalign: 0;
+				margin-top: 20;
+				label: "Running";
+			}
+		  }
+		}
+	}
+}
