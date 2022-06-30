@@ -27,6 +27,7 @@ from gi.repository import Gtk, Gio, Adw, Soup, GLib
 from .window import LogisticsWindow, AboutDialog
 
 
+
 class LogisticsApplication(Adw.Application):
     """The main application singleton class."""
 

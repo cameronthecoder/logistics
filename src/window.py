@@ -18,29 +18,13 @@
 #from .cp import ContainersPage
 
 from gi.repository import Adw, Gtk, Gio, GObject
-from .docker import DockerClient
+from .docker import DockerClient, Image, ImageRow
 
 
-class ImageObject(GObject.Object):
-    __gtype_name__ = 'LangObject'
-
-    containers = GObject.Property(type=int)
-    created = GObject.Property(type=int)
-    id = GObject.Property(type=str)
-    selected = GObject.Property(type=bool, default=False)
-
-    def __init__(self, code, name):
-        super().__init__()
-
-        self.set_property('id', code)
-        self.set_property('name', name)
 
 @Gtk.Template(resource_path='/com/camerondahl/Logistics/ui/containers_page.ui')
 class ContainersPage(Adw.Bin):
     __gtype_name__ = 'ContainersPage'
-
-    #blah = Gtk.Template.Child()
-
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -50,9 +34,21 @@ class ImagesPage(Adw.Bin):
     __gtype_name__ = 'ImagesPage'
 
     images_list = Gtk.Template.Child()
+    label = Gtk.Template.Child()
+
+    store = Gio.ListStore.new(Image)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        print(self.images_list)
+        self.images_list.bind_model(self.store, lambda f: ImageRow(f))
+        self.client = DockerClient()
+        self.client.get_images(self.on_images_response)
+
+    def on_images_response(self, success, error, data):
+        if data:
+            for image in data:
+                self.store.append(Image(image))
 
 @Gtk.Template(resource_path='/com/camerondahl/Logistics/ui/window.ui')
 class LogisticsWindow(Adw.ApplicationWindow):
@@ -60,18 +56,11 @@ class LogisticsWindow(Adw.ApplicationWindow):
 
     leaflet = Gtk.Template.Child()
     view_stack = Gtk.Template.Child()
+    images_page = Gtk.Template.Child()
+    containers_page = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.containers_page = ContainersPage()
-        self.images_page = ImagesPage()
-        self.client = DockerClient()
-        self.cancellable = Gio.Cancellable.new()
-        #self.client.get_images(self.cancellable, self.callback)
-
-    def callback(self, cb):
-        print('CB:' + cb)
-
 
 
 

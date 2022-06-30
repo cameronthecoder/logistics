@@ -2,7 +2,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template ImagesPage :Adw.Bin {
+template ImagesPage : Adw.Bin {
 	Gtk.ScrolledWindow {
 		Adw.Clamp {
 		  styles ["clamp"]
@@ -14,7 +14,7 @@ template ImagesPage :Adw.Bin {
 
 
 
-			Gtk.Label {
+			Gtk.Label label {
 				styles ["heading"]
 				xalign: 0;
 				margin-top: 20;
@@ -24,12 +24,8 @@ template ImagesPage :Adw.Bin {
 
 			Gtk.ListBox images_list {
 				styles ["boxed-list"]
+				valign: start;
 				selection-mode: none;
-
-				Adw.ActionRow {
-					icon-name: "grid-filled-symbolic";
-					title: "Test";
-				}
 			}
 		  }
 		}

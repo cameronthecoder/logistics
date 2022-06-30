@@ -2,7 +2,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template ContainersPage :Adw.Bin {
+template ContainersPage : Adw.Bin {
 	Gtk.ScrolledWindow {
 		Adw.Clamp {
 		  styles ["clamp"]

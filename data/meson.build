@@ -15,7 +15,8 @@ blueprints = custom_target('blueprints',
   input: files(
     'ui/window.bp',
     'ui/containers_page.bp',
-    'ui/images_page.bp'
+    'ui/images_page.bp',
+    'ui/image_row.bp'
   ),
   output: '.',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],

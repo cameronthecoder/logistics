@@ -5,6 +5,8 @@
     <file>ui/window.ui</file>
     <file>ui/images_page.ui</file>
     <file>ui/images_page.bp</file>
+    <file>ui/image_row.bp</file>
+    <file>ui/image_row.ui</file>
     <file>ui/containers_page.ui</file>
     <file>ui/containers_page.bp</file>
     <file>ui/help-overlay.ui</file>
