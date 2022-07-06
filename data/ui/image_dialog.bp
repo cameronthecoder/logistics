@@ -1,0 +1,60 @@
+using Gtk 4.0;
+using Adw 1;
+
+template ImageDialog : Adw.Window {
+	title: "Test";
+	modal: true;
+	default-width: 400;
+  	default-height: 500;
+
+	Gtk.ScrolledWindow {
+
+	Gtk.Box {
+		orientation: vertical;
+		spacing: 10;
+
+		Adw.HeaderBar {
+			styles ["flat"]
+		}
+
+		Adw.Clamp {
+		  styles ["clamp"]
+
+
+		  Gtk.Box {
+		  	orientation: vertical;
+			spacing: 10;
+
+			Adw.StatusPage status_page {
+			  visible: true;
+			  vexpand: true;
+
+			  title: "Loading";
+			  child: Spinner spinner {
+			     	spinning: true;
+			};
+		      }
+		  }
+
+		  Adw.PreferencesGroup container_group {
+		  	title: "Container";
+
+		  	Adw.ActionRow hostname_row {
+		  		title: "Hostname";
+		  		title-lines: 1;
+		  		child: Label hostname_label {
+		  		   styles ["dim-label"]
+		  		   margin-top: 6;
+		  		   margin-bottom: 6;
+		  		   ellipsize: end;
+		  		   lines: 5;
+		  		   justify: right;
+		  		   xalign: 1;
+		  		};
+		  	}
+		  }
+		}
+		}
+	}
+
+}

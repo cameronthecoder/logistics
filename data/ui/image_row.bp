@@ -4,7 +4,7 @@ using Adw 1;
 template ImageRow : Adw.ActionRow {
   activatable: true;
   focusable: true;
-  selectable: false;
+  selectable: true;
   /* Translators: Fallback name for partitions that don't have a name. Can be followed by a number. */
   title: "Unnamed Partition";
 
@@ -21,15 +21,6 @@ template ImageRow : Adw.ActionRow {
     halign: end;
     hhomogeneous: false;
     vhomogeneous: false;
-
-    StackPage {
-     name: "version";
-     child:
-      Label version {
-     	styles ["tag"]
-     	label: "latest";
-      };
-    }
 
     StackPage {
       name: "ok";
