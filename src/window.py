@@ -15,23 +15,23 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#from .cp import ContainersPage
+# from .cp import ContainersPage
 
 from gi.repository import Adw, Gtk, Gio, GObject, GLib
 from .docker import DockerClient, Image, ImageRow
 
 
-
-@Gtk.Template(resource_path='/com/camerondahl/Logistics/ui/containers_page.ui')
+@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/containers_page.ui")
 class ContainersPage(Adw.Bin):
-    __gtype_name__ = 'ContainersPage'
+    __gtype_name__ = "ContainersPage"
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-@Gtk.Template(resource_path='/com/camerondahl/Logistics/ui/image_dialog.ui')
+
+@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_dialog.ui")
 class ImageDialog(Adw.Window):
-    __gtype_name__ = 'ImageDialog'
+    __gtype_name__ = "ImageDialog"
 
     spinner = Gtk.Template.Child()
     status_page = Gtk.Template.Child()
@@ -61,10 +61,9 @@ class ImageDialog(Adw.Window):
         self.window.spinner.stop()
 
 
-
-@Gtk.Template(resource_path='/com/camerondahl/Logistics/ui/images_page.ui')
+@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/images_page.ui")
 class ImagesPage(Adw.Bin):
-    __gtype_name__ = 'ImagesPage'
+    __gtype_name__ = "ImagesPage"
 
     images_list = Gtk.Template.Child()
     label = Gtk.Template.Child()
@@ -79,9 +78,8 @@ class ImagesPage(Adw.Bin):
         self.images_list.bind_model(self.store, lambda f: ImageRow(f))
         self.images_list.connect("row-selected", self.row_selected)
 
-
-    def row_selected(self, row, container):
-        dialog = ImageDialog(container.image, self.window)
+    def row_selected(self, listbox, row):
+        dialog = ImageDialog(row.image, self.window)
         dialog.set_modal(True)
         dialog.present()
 
@@ -89,17 +87,25 @@ class ImagesPage(Adw.Bin):
         print(window)
         self.window = window
         self.window.client.get_images(self.on_images_response)
+        self.window.client.connect("image_deleted", self.on_image_deleted)
+        self.window.client.connect("image_pull", self.on_image_pulled)
 
+    def on_image_pulled(self, source, id):
+        def callback(success, error, data):
+            self.store.append(Image(data))
+
+        self.window.client.inspect_image(id, callback)
+
+    def on_image_deleted(self, source, id):
+        image = [image for image in self.store if image.id == id]
+        pos = self.store.find(image[0])
+        self.store.remove(pos[1])
 
     def get_images(self):
-        print("GET IMAGES CALL")
-        self.store.remove_all() # TODO: Use docker engine
+        self.store.remove_all()  # TODO: Use docker engine
         self.window.client.get_images(self.on_images_response)
-        return True
-
 
     def on_images_response(self, success, error, data):
-        print("IMAGES RESPONSE")
         if error:
             self.label.set_visible(False)
             self.images_list.set_visible(False)
@@ -111,9 +117,10 @@ class ImagesPage(Adw.Bin):
             [self.store.append(Image(image)) for image in data]
         self.window.spinner.stop()
 
-@Gtk.Template(resource_path='/com/camerondahl/Logistics/ui/window.ui')
+
+@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/window.ui")
 class LogisticsWindow(Adw.ApplicationWindow):
-    __gtype_name__ = 'LogisticsWindow'
+    __gtype_name__ = "LogisticsWindow"
 
     leaflet = Gtk.Template.Child()
     view_stack = Gtk.Template.Child()
@@ -123,21 +130,18 @@ class LogisticsWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.app = kwargs['application']
+        self.app = kwargs["application"]
         self.client = DockerClient(self.spinner)
         self.images_page.set_window(self)
 
 
-
-
 class AboutDialog(Gtk.AboutDialog):
-
     def __init__(self, parent):
         Gtk.AboutDialog.__init__(self)
-        self.props.program_name = 'logistics'
+        self.props.program_name = "logistics"
         self.props.version = "0.1.0"
-        self.props.authors = ['Cameron Dahl']
-        self.props.copyright = '2022 Cameron Dahl'
-        self.props.logo_icon_name = 'com.camerondahl.Logistics'
+        self.props.authors = ["Cameron Dahl"]
+        self.props.copyright = "2022 Cameron Dahl"
+        self.props.logo_icon_name = "com.camerondahl.Logistics"
         self.props.modal = True
         self.set_transient_for(parent)

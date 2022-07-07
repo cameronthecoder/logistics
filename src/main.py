@@ -19,28 +19,25 @@ import sys
 import gi
 import socket
 
-gi.require_version('Gtk', '4.0')
-gi.require_version('Adw', '1')
-gi.require_version('Soup', '3.0')
+gi.require_version("Gtk", "4.0")
+gi.require_version("Adw", "1")
+gi.require_version("Soup", "3.0")
 
 from gi.repository import Gtk, Gio, Adw, Soup, GLib
 from .window import LogisticsWindow, AboutDialog
-
 
 
 class LogisticsApplication(Adw.Application):
     """The main application singleton class."""
 
     def __init__(self):
-        super().__init__(application_id='com.camerondahl.Logistics',
-                         flags=Gio.ApplicationFlags.FLAGS_NONE)
-        self.create_action('quit', self.quit, ['<primary>q'])
-        self.create_action('about', self.on_about_action)
-        self.create_action('preferences', self.on_preferences_action)
-
-    def callback(self):
-        print('hi')
-
+        super().__init__(
+            application_id="com.camerondahl.Logistics",
+            flags=Gio.ApplicationFlags.FLAGS_NONE,
+        )
+        self.create_action("quit", self.quit, ["<primary>q"])
+        self.create_action("about", self.on_about_action)
+        self.create_action("preferences", self.on_preferences_action)
 
     def do_activate(self):
         """Called when the application is activated.
@@ -53,11 +50,6 @@ class LogisticsApplication(Adw.Application):
             win = LogisticsWindow(application=self)
         win.present()
 
-
-    def on_cancel():
-        print('canceled')
-
-
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
         about = AboutDialog(self.props.active_window)
@@ -65,7 +57,7 @@ class LogisticsApplication(Adw.Application):
 
     def on_preferences_action(self, widget, _):
         """Callback for the app.preferences action."""
-        print('app.preferences action activated')
+        print("app.preferences action activated")
 
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.
