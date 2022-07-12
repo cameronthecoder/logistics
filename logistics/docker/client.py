@@ -1,76 +1,9 @@
-import gi, json, logging, math
+import gi, logging, json
 
 gi.require_version("Soup", "3.0")
 gi.require_version("Adw", "1")
-from gi.repository import GObject, Adw, Soup, Gio, GLib, Gtk
 
-
-class ContainerConfig(GObject.GObject):
-    __gtype_name__ = "ContainerConfig"
-    hostname = GObject.Property(type=str)
-    domainname = GObject.Property(type=str)
-    user = GObject.Property(type=str)
-    attachStdin = GObject.Property(type=bool, default=False)
-    tty = GObject.Property(type=bool, default=False)
-    env: Gtk.ListStore = GObject.Property(type=Gtk.ListStore)
-
-    def __init__(self, inspect_data, **kwargs):
-        super().__init__(**kwargs)
-        self.set_property("hostname", inspect_data["Hostname"])
-        self.set_property("domainname", inspect_data["Domainname"])
-        self.set_property("user", inspect_data["User"])
-        self.set_property("attachStdin", inspect_data["AttachStdin"])
-        self.set_property("tty", inspect_data["Tty"])
-        self.set_property("env", Gtk.ListStore(str))
-
-        [self.env.append([variable]) for variable in inspect_data["Env"]]
-
-
-class Image(GObject.GObject):
-    __gtype_name__ = "Image"
-    id = GObject.Property(type=str)
-    name = GObject.Property(type=str)
-    version = GObject.Property(type=str)
-    size = GObject.Property(type=int)
-    container_config = GObject.Property(type=ContainerConfig)
-
-    def __init__(self, image_data, **kwargs):
-        super().__init__(**kwargs)
-        name, version = image_data["RepoTags"][0].split(":")
-        self.set_property("name", name)
-        self.set_property("id", image_data["Id"])
-        self.set_property("version", version)
-        self.set_property("size", image_data["Size"])
-
-    def add_inspection_info(self, inspect_data):
-        self.set_property(
-            "container_config", ContainerConfig(inspect_data["ContainerConfig"])
-        )
-
-
-@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_row.ui")
-class ImageRow(Adw.ActionRow):
-    __gtype_name__ = "ImageRow"
-
-    size = Gtk.Template.Child()
-
-    def convert_size(self, size_bytes):
-        if size_bytes == 0:
-            return "0B"
-        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-        i = int(math.floor(math.log(size_bytes, 1024)))
-        p = math.pow(1024, i)
-        s = round(size_bytes / p, 2)
-        return "%s %s" % (s, size_name[i])
-
-    def __init__(self, image, **kwargs):
-        super().__init__(**kwargs)
-        self.image = image
-        self.set_title(image.name)
-        self.size.set_label(self.convert_size(image.size))
-
-    def get_label(self):
-        return self.get_title()
+from gi.repository import Adw, Gtk, GObject, Gio, Soup, GLib
 
 
 class DockerClient(GObject.Object):
@@ -124,7 +57,6 @@ class DockerClient(GObject.Object):
         resp = self.session.send_async(
             message, GLib.PRIORITY_DEFAULT, self.cancellable, on_response, message
         )
-        print("waiting for call")
         return message, resp
 
     def make_api_call(self, url, callback):
@@ -139,7 +71,6 @@ class DockerClient(GObject.Object):
                 error = e
             callback(success, error, data)
 
-        self.cancellable = Gio.Cancellable().new()
         msg = Soup.Message.new("GET", url)
         resp = self.session.send_and_read_async(
             msg, GLib.PRIORITY_DEFAULT, self.cancellable, on_response, msg
