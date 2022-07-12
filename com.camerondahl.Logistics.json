@@ -23,7 +23,6 @@
         "*.a"
     ],
     "modules" : [
-        "python3-dependencies.json",
 	{
             "name" : "blueprint-compiler",
             "buildsystem" : "meson",
