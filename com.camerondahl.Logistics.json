@@ -40,8 +40,8 @@
             "buildsystem" : "meson",
             "sources" : [
                 {
-                    "type" : "git",
-                    "url" : "file:///home/cameron/Projects/Logistics"
+                    "type" : "dir",
+                    "path" : "."
                 }
             ]
         }
