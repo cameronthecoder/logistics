@@ -3,7 +3,7 @@ import gi, logging, json
 gi.require_version("Soup", "3.0")
 gi.require_version("Adw", "1")
 
-from gi.repository import Adw, Gtk, GObject, Gio, Soup, GLib
+from gi.repository import Adw, GObject, Gio, Soup, GLib
 
 
 class DockerClient(GObject.Object):
@@ -19,11 +19,20 @@ class DockerClient(GObject.Object):
             None,
             (str,),
         ),
+        "finished_loading": (
+            GObject.SIGNAL_RUN_LAST,
+            None,
+            (),
+        ),
+        "start_loading": (
+            GObject.SIGNAL_RUN_LAST,
+            None,
+            (),
+        ),
     }
 
-    def __init__(self, spinner):
+    def __init__(self):
         GObject.Object.__init__(self)
-        self.spinner: Gtk.Spinner = spinner
         self.cancellable = Gio.Cancellable().new()
         self.session = Soup.Session()
         self.session.set_timeout(0)  # docker engine monitoring endpoint
@@ -78,10 +87,11 @@ class DockerClient(GObject.Object):
         return msg, resp
 
     def get_images(self, callback):
-        self.spinner.start()
+        self.emit("start_loading")
         self.make_api_call("http://127.0.0.1:5555/images/json", callback)
 
     def get_containers(self, callback):
+        self.emit("start_loading")
         self.make_api_call("http://127.0.0.1:5555/containers/json?all=true", callback)
 
     def inspect_image(self, name, callback):
