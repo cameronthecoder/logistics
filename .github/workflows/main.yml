@@ -15,6 +15,6 @@ jobs:
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v4
       with:
         bundle: logistics.flatpak
-        manifest-path: com.camerondahl.Logistics.devel.json
+        manifest-path: com.camerondahl.Logistics.json
         cache-key: flatpak-builder-${{ github.sha }}
         run-tests: true
