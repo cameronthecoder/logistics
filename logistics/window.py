@@ -37,8 +37,12 @@ class LogisticsWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = kwargs["application"]
-        self.client = DockerClient(self.spinner)
+        self.client = DockerClient()
+        self.client.connect("finished_loading", self.on_finished_loading)
         self.images_page.set_window(self)
+
+    def on_finished_loading(self, _):
+        self.spinner.stop()
 
 
 class AboutDialog(Gtk.AboutDialog):
