@@ -60,7 +60,6 @@ class ImagesPage(Adw.Bin):
         self.store.remove(pos[1])
 
     def get_images(self):
-        self.store.remove_all()  # TODO: Use docker engine
         self.window.client.get_images(self.on_images_response)
 
     def on_images_response(self, success, error, data):

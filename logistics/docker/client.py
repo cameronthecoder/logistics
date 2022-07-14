@@ -79,10 +79,9 @@ class DockerClient(GObject.Object):
             )
 
         message = Soup.Message.new("GET", "http://127.0.0.1:5555/events")
-        resp = self.session.send_async(
+        self.session.send_async(
             message, GLib.PRIORITY_DEFAULT, self.cancellable, on_response, message
         )
-        return message, resp
 
     def make_api_call(self, url, callback):
         def on_response(session, result, message):
@@ -97,10 +96,9 @@ class DockerClient(GObject.Object):
             callback(success, error, data)
 
         msg = Soup.Message.new("GET", url)
-        resp = self.session.send_and_read_async(
+        self.session.send_and_read_async(
             msg, GLib.PRIORITY_DEFAULT, self.cancellable, on_response, msg
         )
-        return msg, resp
 
     def get_images(self, callback):
         self.emit("start_loading")

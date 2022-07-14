@@ -30,6 +30,11 @@ template LogisticsWindow : Adw.ApplicationWindow {
 				Gtk.Spinner spinner {
 				  spinning: true;
 				}
+
+				[end]
+				Gtk.Button refresh_button {
+				  icon-name: "refresh-symbolic";
+				}
 			}
 
 			Gtk.Box {

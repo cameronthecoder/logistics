@@ -15,12 +15,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# from .cp import ContainersPage
 
-from gi.repository import Adw, Gtk, Gio, GObject, GLib
+from gi.repository import Adw, Gtk
 from logistics.docker.client import DockerClient
 from .containers_page import ContainersPage
-from .image_row import ImageRow
 from .images_page import ImagesPage
 
 
@@ -30,8 +28,8 @@ class LogisticsWindow(Adw.ApplicationWindow):
 
     leaflet = Gtk.Template.Child()
     view_stack = Gtk.Template.Child()
-    images_page = Gtk.Template.Child()
-    containers_page = Gtk.Template.Child()
+    images_page: ImagesPage = Gtk.Template.Child()
+    containers_page: ContainersPage = Gtk.Template.Child()
     spinner = Gtk.Template.Child()
 
     def __init__(self, **kwargs):

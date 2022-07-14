@@ -12,6 +12,5 @@
     <file>ui/containers_page.ui</file>
     <file>ui/containers_page.bp</file>
     <file>ui/help-overlay.ui</file>
-    <file preprocess="xml-stripblanks">icons/grid-filled-symbolic.svg</file>
   </gresource>
 </gresources>
