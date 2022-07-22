@@ -25,16 +25,15 @@ class ImagesPage(Adw.Bin):
 
     images_list = Gtk.Template.Child()
     label = Gtk.Template.Child()
-    status_page = Gtk.Template.Child()
 
     store = Gio.ListStore.new(Image)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        print(self.images_list)
-        self.images_list.set_selection_mode(Gtk.SelectionMode.SINGLE)
-        self.images_list.bind_model(self.store, lambda f: ImageRow(f))
-        self.images_list.connect("row-selected", self.row_selected)
+        if self.images_list:
+            self.images_list.set_selection_mode(Gtk.SelectionMode.SINGLE)
+            self.images_list.bind_model(self.store, lambda f: ImageRow(f))
+            self.images_list.connect("row-selected", self.row_selected)
 
     def row_selected(self, _, row):
         dialog = ImageDialog(row.image, self.window)
@@ -63,13 +62,8 @@ class ImagesPage(Adw.Bin):
         self.window.client.get_images(self.on_images_response)
 
     def on_images_response(self, success, error, data):
-        if error:
-            self.label.set_visible(False)
-            self.images_list.set_visible(False)
-            self.status_page.set_visible(True)
         if data and success:
             self.label.set_visible(True)
             self.images_list.set_visible(True)
-            self.status_page.set_visible(False)
             [self.store.append(Image(image)) for image in data]
         self.window.spinner.stop()

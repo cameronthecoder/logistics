@@ -45,6 +45,11 @@ class DockerClient(GObject.Object):
             None,
             (),
         ),
+        "core_error": (
+            GObject.SIGNAL_RUN_LAST,
+            None,
+            (),
+        ),
     }
 
     def __init__(self):
@@ -60,15 +65,17 @@ class DockerClient(GObject.Object):
             input_stream: Gio.InputStream = source.send_finish(res)
 
             def on_callback(dataInputStream, res, user_data):
-                lineout, _ = dataInputStream.read_line_finish(res)
-                out = lineout.decode()
-                json_data = json.loads(out)
-                print(json_data)
+                json_data = {}
+                try:
+                    lineout, _ = dataInputStream.read_line_finish(res)
+                    out = lineout.decode()
+                    json_data = json.loads(out)
+                except Exception as e:
+                    self.emit('core_error')
                 if json_data["status"] == "delete":
                     self.emit("image_deleted", json_data["id"])
                 elif json_data["status"] == "pull":
                     self.emit("image_pull", json_data["id"])
-
                 data_input_stream.read_line_async(
                     GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
                 )
@@ -83,7 +90,7 @@ class DockerClient(GObject.Object):
             message, GLib.PRIORITY_DEFAULT, self.cancellable, on_response, message
         )
 
-    def make_api_call(self, url, callback):
+    def make_api_call(self, url, callback, core_call = False):
         def on_response(session, result, message):
             data = success = error = None
             try:
@@ -92,7 +99,10 @@ class DockerClient(GObject.Object):
                 success = True
             except Exception as e:
                 logging.warning(e)
+                if core_call:
+                    self.emit("core_error")
                 error = e
+
             callback(success, error, data)
 
         msg = Soup.Message.new("GET", url)
@@ -102,11 +112,11 @@ class DockerClient(GObject.Object):
 
     def get_images(self, callback):
         self.emit("start_loading")
-        self.make_api_call("http://127.0.0.1:5555/images/json", callback)
+        self.make_api_call("http://127.0.0.1:5555/images/json", callback, True)
 
     def get_containers(self, callback):
         self.emit("start_loading")
-        self.make_api_call("http://127.0.0.1:5555/containers/json?all=true", callback)
+        self.make_api_call("http://127.0.0.1:5555/containers/json?all=true", callback, True)
 
     def inspect_image(self, name, callback):
         self.make_api_call(f"http://127.0.0.1:5555/images/{name}/json", callback)

@@ -30,7 +30,11 @@ class LogisticsWindow(Adw.ApplicationWindow):
     view_stack = Gtk.Template.Child()
     images_page: ImagesPage = Gtk.Template.Child()
     containers_page: ContainersPage = Gtk.Template.Child()
+    header_bar = Gtk.Template.Child()
+    status_page = Gtk.Template.Child()
     spinner = Gtk.Template.Child()
+    refresh_button = Gtk.Template.Child()
+    title = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -38,13 +42,26 @@ class LogisticsWindow(Adw.ApplicationWindow):
         self.client = DockerClient()
         self.client.connect("finished_loading", self.on_finished_loading)
         self.client.connect("start_loading", self.on_started_loading)
+        self.client.connect("core_error", self.on_core_error)
         self.images_page.set_window(self)
 
     def on_finished_loading(self, _):
         self.spinner.stop()
 
+
+    @Gtk.Template.Callback()
+    def on_button_clicked(self, *args):
+        print("clicked")
+
     def on_started_loading(self, _):
         self.spinner.start()
+
+    def on_core_error(self, _):
+        print("CORE ERROR")
+        self.view_stack.set_visible(False)
+        self.title.set_visible(False)
+        self.images_page.set_visible(False)
+        self.status_page.set_visible(True)
 
 
 class AboutDialog(Gtk.AboutDialog):
