@@ -33,12 +33,31 @@ template LogisticsWindow : Adw.ApplicationWindow {
 
 				[end]
 				Gtk.Button refresh_button {
+				  clicked => on_button_clicked();
 				  icon-name: "refresh-symbolic";
 				}
 			}
 
 			Gtk.Box {
 				orientation: vertical;
+
+				Adw.StatusPage status_page {
+				  visible: false;
+				  vexpand: true;
+
+				  icon-name: "network-error-symbolic";
+				  title: "Could not connect to Docker daemon";
+				  description: "Make sure that Docker is installed and running and the URI is set correctly in the Preferences window.";
+				  child: Adw.Clamp {
+				    styles ["clamp"]
+				      Gtk.Button cta_preferences {
+					styles ["suggested-action", "pill"]
+					label: "Preferences";
+					valign: center;
+					halign: center;
+				   }
+				};
+			      }
 
 				Adw.ViewStack view_stack {
 					vexpand: true;
@@ -61,7 +80,7 @@ template LogisticsWindow : Adw.ApplicationWindow {
 					}
 				}
 
-				Adw.ViewSwitcherBar {
+				Adw.ViewSwitcherBar switcher_bar {
 					stack: view_stack;
 					reveal: bind title.title-visible;
 				}

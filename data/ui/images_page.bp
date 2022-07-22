@@ -16,24 +16,6 @@ template ImagesPage : Adw.Bin {
 			spacing: 10;
 
 
-			Adw.StatusPage status_page {
-			  visible: false;
-			  vexpand: true;
-
-			  icon-name: "network-error-symbolic";
-			  title: "Could not connect to Docker daemon";
-			  description: "Make sure your Engine URL in the Preferences window is set correctly.";
-			  child: Adw.Clamp {
-			    styles ["clamp"]
-			      Gtk.Button cta_preferences {
-			        styles ["suggested-action", "pill"]
-			        label: "Preferences";
-			        valign: center;
-			        halign: center;
-			   }
-			};
-		      }
-
 			Gtk.Label label {
 				styles ["heading"]
 				xalign: 0;
