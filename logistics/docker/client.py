@@ -50,6 +50,11 @@ class DockerClient(GObject.Object):
             None,
             (),
         ),
+        "core_connected": (
+            GObject.SIGNAL_RUN_LAST,
+            None,
+            (),
+        ),
     }
 
     def __init__(self):
@@ -62,28 +67,34 @@ class DockerClient(GObject.Object):
 
     def monitor_events(self):
         def on_response(source: Soup.Session, res: Gio.Task, data: Soup.Message):
-            input_stream: Gio.InputStream = source.send_finish(res)
-
+            input_stream = None
+            try:
+                input_stream: Gio.InputStream = source.send_finish(res)
+                self.emit("core_connected")
+            except Exception as e:
+                self.emit("core_error")
             def on_callback(dataInputStream, res, user_data):
                 json_data = {}
                 try:
                     lineout, _ = dataInputStream.read_line_finish(res)
                     out = lineout.decode()
                     json_data = json.loads(out)
+                    print(json_data)
                 except Exception as e:
                     self.emit('core_error')
-                if json_data["status"] == "delete":
-                    self.emit("image_deleted", json_data["id"])
-                elif json_data["status"] == "pull":
-                    self.emit("image_pull", json_data["id"])
+                if "status" in json_data:
+                    if json_data["status"] == "delete":
+                        self.emit("image_deleted", json_data["id"])
+                    elif json_data["status"] == "pull":
+                        self.emit("image_pull", json_data["id"])
+                    data_input_stream.read_line_async(
+                        GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
+                    )
+            if input_stream:
+                data_input_stream = Gio.DataInputStream.new(input_stream)
                 data_input_stream.read_line_async(
                     GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
                 )
-
-            data_input_stream = Gio.DataInputStream.new(input_stream)
-            data_input_stream.read_line_async(
-                GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
-            )
 
         message = Soup.Message.new("GET", "http://127.0.0.1:5555/events")
         self.session.send_async(

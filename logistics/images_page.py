@@ -55,8 +55,9 @@ class ImagesPage(Adw.Bin):
 
     def on_image_deleted(self, source, id):
         image = [image for image in self.store if image.id == id]
-        pos = self.store.find(image[0])
-        self.store.remove(pos[1])
+        if image[0]:
+            pos = self.store.find(image[0])
+            self.store.remove(pos[1])
 
     def get_images(self):
         self.window.client.get_images(self.on_images_response)
