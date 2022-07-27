@@ -23,7 +23,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 gi.require_version("Soup", "3.0")
 
-from gi.repository import Gtk, Gio, Adw, Soup, GLib
+from gi.repository import Gtk, Gio, Adw, Soup, GLib, Gdk
 from .window import LogisticsWindow, AboutDialog
 
 
@@ -46,6 +46,13 @@ class LogisticsApplication(Adw.Application):
         necessary.
         """
         win = self.props.active_window
+        provider = Gtk.CssProvider.new()
+        display = Gdk.Display.get_default()
+        Gtk.StyleContext.add_provider_for_display(
+            display,
+            provider,
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        provider.load_from_resource("/com/camerondahl/Logistics/ui/style.css")
         if not win:
             win = LogisticsWindow(application=self)
         win.present()

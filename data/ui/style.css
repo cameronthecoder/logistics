@@ -1,0 +1,14 @@
+
+.bubble {
+  border-radius: 50%;
+  background: @insensitive_fg_color;
+  color: @accent_fg_color;
+  min-width: 30px;
+  min-height: 30px;
+}
+
+.bubble.large {
+  min-width: 86px;
+  min-height: 86px;
+}
+
