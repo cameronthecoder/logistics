@@ -1,5 +1,6 @@
 from gi.repository import Adw, Gtk
 
+
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_dialog.ui")
 class ImageDialog(Adw.Window):
     __gtype_name__ = "ImageDialog"

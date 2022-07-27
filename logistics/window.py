@@ -49,7 +49,6 @@ class LogisticsWindow(Adw.ApplicationWindow):
     def on_finished_loading(self, _):
         self.spinner.stop()
 
-
     @Gtk.Template.Callback()
     def on_button_clicked(self, *args):
         self.client.monitor_events()
@@ -64,7 +63,6 @@ class LogisticsWindow(Adw.ApplicationWindow):
         self.title.set_visible(False)
         self.images_page.set_visible(False)
         self.status_page.set_visible(True)
-
 
     def on_core_success(self, _):
         print("CORE SUCESS")

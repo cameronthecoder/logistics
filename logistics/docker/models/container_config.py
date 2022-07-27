@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from gi.repository import GObject, Gtk
 
+
 class ContainerConfig(GObject.GObject):
     __gtype_name__ = "ContainerConfig"
     hostname = GObject.Property(type=str)

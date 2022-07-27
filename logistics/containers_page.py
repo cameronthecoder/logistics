@@ -16,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from gi.repository import Adw, Gtk
 
+
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/containers_page.ui")
 class ContainersPage(Adw.Bin):
     __gtype_name__ = "ContainersPage"

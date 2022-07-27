@@ -19,6 +19,7 @@ from .image_dialog import ImageDialog
 from .image_row import ImageRow
 from logistics.docker.models.image import Image
 
+
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/images_page.ui")
 class ImagesPage(Adw.Bin):
     __gtype_name__ = "ImagesPage"

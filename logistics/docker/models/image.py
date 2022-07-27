@@ -17,6 +17,7 @@
 from gi.repository import GObject
 from .container_config import ContainerConfig
 
+
 class Image(GObject.GObject):
     __gtype_name__ = "Image"
     id = GObject.Property(type=str)
