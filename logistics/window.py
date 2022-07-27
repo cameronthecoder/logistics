@@ -42,8 +42,7 @@ class LogisticsWindow(Adw.ApplicationWindow):
         self.client = DockerClient()
         self.client.connect("finished_loading", self.on_finished_loading)
         self.client.connect("start_loading", self.on_started_loading)
-        self.client.connect("core_error", self.on_core_error)
-        self.client.connect("core_connected", self.on_core_success)
+        self.client.connect("monitor_status_changed", self.on_monitor_status_changed)
         self.images_page.set_window(self)
 
     def on_finished_loading(self, _):
@@ -57,19 +56,11 @@ class LogisticsWindow(Adw.ApplicationWindow):
     def on_started_loading(self, _):
         self.spinner.start()
 
-    def on_core_error(self, _):
-        print("CORE ERROR")
-        self.view_stack.set_visible(False)
-        self.title.set_visible(False)
-        self.images_page.set_visible(False)
-        self.status_page.set_visible(True)
-
-    def on_core_success(self, _):
-        print("CORE SUCESS")
-        self.view_stack.set_visible(True)
-        self.title.set_visible(True)
-        self.images_page.set_visible(True)
-        self.status_page.set_visible(False)
+    def on_monitor_status_changed(self, source, success):
+        self.view_stack.set_visible(success == True)
+        self.title.set_visible(success == True)
+        self.images_page.set_visible(success == True)
+        self.status_page.set_visible(success == False)
 
 
 class AboutDialog(Gtk.AboutDialog):

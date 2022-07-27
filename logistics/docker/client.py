@@ -45,15 +45,10 @@ class DockerClient(GObject.Object):
             None,
             (),
         ),
-        "core_error": (
+        "monitor_status_changed": (
             GObject.SIGNAL_RUN_LAST,
             None,
-            (),
-        ),
-        "core_connected": (
-            GObject.SIGNAL_RUN_LAST,
-            None,
-            (),
+            (bool,),
         ),
     }
 
@@ -70,9 +65,9 @@ class DockerClient(GObject.Object):
             input_stream = None
             try:
                 input_stream: Gio.InputStream = source.send_finish(res)
-                self.emit("core_connected")
+                self.emit("monitor_status_changed", True)
             except Exception as e:
-                self.emit("core_error")
+                self.emit("monitor_status_changed", False)
 
             def on_callback(dataInputStream, res, user_data):
                 json_data = {}
@@ -82,7 +77,7 @@ class DockerClient(GObject.Object):
                     json_data = json.loads(out)
                     print(json_data)
                 except Exception as e:
-                    self.emit("core_error")
+                    self.emit("monitor_status_changed", False)
                 if "status" in json_data:
                     if json_data["status"] == "delete":
                         self.emit("image_deleted", json_data["id"])
@@ -113,7 +108,7 @@ class DockerClient(GObject.Object):
             except Exception as e:
                 logging.warning(e)
                 if core_call:
-                    self.emit("core_error")
+                    self.emit("monitor_status_changed", False)
                 error = e
 
             callback(success, error, data)
