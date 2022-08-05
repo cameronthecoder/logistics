@@ -24,7 +24,7 @@ gi.require_version("Adw", "1")
 gi.require_version("Soup", "3.0")
 
 from gi.repository import Gtk, Gio, Adw, Soup, GLib, Gdk
-from .window import LogisticsWindow, AboutDialog
+from logistics.window import LogisticsWindow, AboutDialog
 
 
 class LogisticsApplication(Adw.Application):

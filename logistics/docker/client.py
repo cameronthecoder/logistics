@@ -128,5 +128,5 @@ class DockerClient(GObject.Object):
             "http://127.0.0.1:5555/containers/json?all=true", callback, True
         )
 
-    def inspect_image(self, name, callback):
-        self.make_api_call(f"http://127.0.0.1:5555/images/{name}/json", callback)
+    def inspect_image(self, id, callback):
+        self.make_api_call(f"http://127.0.0.1:5555/images/{id}/json", callback)

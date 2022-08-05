@@ -18,8 +18,8 @@
 
 from gi.repository import Adw, Gtk
 from logistics.docker.client import DockerClient
-from .containers_page import ContainersPage
-from .images_page import ImagesPage
+from logistics.containers_page import ContainersPage
+from logistics.images_page import ImagesPage
 
 
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/window.ui")

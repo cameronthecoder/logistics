@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from gi.repository import GObject
-from .container_config import ContainerConfig
+from logistics.docker.models.container_config import ContainerConfig
 
 
 class Image(GObject.GObject):

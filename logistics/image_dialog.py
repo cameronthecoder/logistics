@@ -1,6 +1,5 @@
 from gi.repository import Adw, Gtk
 
-
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_dialog.ui")
 class ImageDialog(Adw.Window):
     __gtype_name__ = "ImageDialog"
@@ -21,7 +20,7 @@ class ImageDialog(Adw.Window):
         self.image = image
         self.image_name.set_label(self.image.name)
         self.window.spinner.start()
-        self.window.client.inspect_image(image.name, self.on_inspect_callback)
+        self.window.client.inspect_image(image.id, self.on_inspect_callback)
 
     def on_inspect_callback(self, success, error, data):
         if data:

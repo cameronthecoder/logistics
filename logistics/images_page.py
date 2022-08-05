@@ -15,8 +15,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from gi.repository import Adw, Gtk, Gio
-from .image_dialog import ImageDialog
-from .image_row import ImageRow
+from logistics.image_dialog import ImageDialog
+from logistics.image_row import ImageRow
 from logistics.docker.models.image import Image
 
 
