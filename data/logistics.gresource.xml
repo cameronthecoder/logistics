@@ -12,7 +12,6 @@
     <file>ui/style.css</file>
     <file>ui/containers_page.ui</file>
     <file>ui/containers_page.bp</file>
-    <file>ui/help-overlay.ui</file>
     <file>icons/scalable/apps/grid-filled-symbolic.svg</file>
     <file>icons/scalable/apps/refresh-symbolic.svg</file>
     <file>icons/scalable/apps/selection-opaque-symbolic.svg</file>

@@ -1,5 +1,6 @@
 from gi.repository import Adw, Gtk
 
+
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_dialog.ui")
 class ImageDialog(Adw.Window):
     __gtype_name__ = "ImageDialog"
@@ -7,9 +8,9 @@ class ImageDialog(Adw.Window):
     spinner = Gtk.Template.Child()
     image_name = Gtk.Template.Child()
 
-    #container_group = Gtk.Template.Child()
-    #hostname_row = Gtk.Template.Child()
-    #hostname_label = Gtk.Template.Child()
+    # container_group = Gtk.Template.Child()
+    # hostname_row = Gtk.Template.Child()
+    # hostname_label = Gtk.Template.Child()
 
     def __init__(self, image, window, **kwargs):
         super().__init__(**kwargs)
@@ -26,8 +27,8 @@ class ImageDialog(Adw.Window):
         if data:
             print(data)
             self.spinner.stop()
-            #self.hostname_row.set_title("Test")
+            # self.hostname_row.set_title("Test")
             self.image.add_inspection_info(data)
 
-            #self.hostname_label.set_label(self.image.container_config.hostname)
+            # self.hostname_label.set_label(self.image.container_config.hostname)
         self.window.spinner.stop()
