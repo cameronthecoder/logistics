@@ -21,6 +21,7 @@ gi.require_version("Adw", "1")
 
 from gi.repository import Adw, Gtk
 
+
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_row.ui")
 class ImageRow(Adw.ActionRow):
     __gtype_name__ = "ImageRow"

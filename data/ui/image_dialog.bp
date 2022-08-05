@@ -4,57 +4,62 @@ using Adw 1;
 template ImageDialog : Adw.Window {
 	title: "Test";
 	modal: true;
-	default-width: 400;
-  	default-height: 500;
+	default-width: 500;
+  	default-height: 600;
 
 	Gtk.ScrolledWindow {
+		vexpand: true;
+		hscrollbar-policy: never;
 
-	Gtk.Box {
-		orientation: vertical;
-		spacing: 10;
-
-		Adw.HeaderBar {
-			styles ["flat"]
-		}
 
 		Adw.Clamp {
-		  styles ["clamp"]
+		  margin-start: 12;
+		  margin-end: 12;
+		  margin-top: 24;
+		  margin-bottom: 24;
+		  maximum-size: 500;
+
+
+		  Gtk.Box {
+		  orientation: vertical;
+		  spacing: 18;
+
 
 
 		  Gtk.Box {
 		  	orientation: vertical;
 			spacing: 10;
 
-			Adw.StatusPage status_page {
-			  visible: true;
-			  vexpand: true;
+			Spinner spinner {
+				spinning: true;
+			}
 
-			  title: "Loading";
-			  child: Spinner spinner {
-			     	spinning: true;
-			};
-		      }
+			Gtk.Image icon {
+			  styles ["bubble", "large"]
+			  icon-name: "selection-opaque";
+			  pixel-size: 32;
+			  halign: center;
+			  margin-top: 24;
+			  height-request: 60;
+			  width-request: 60;
+			}
+
+			Adw.Clamp {
+			maximum-size: 400;
+			tightening-threshold: 200;
+
+			Label image_name {
+			styles ["title-1"]
+			wrap: true;
+			justify: center;
+			ellipsize: end;
+			lines: 3;
+			}
+			}
+
 		  }
 
-		  Adw.PreferencesGroup container_group {
-		  	title: "Container";
-
-		  	Adw.ActionRow hostname_row {
-		  		title: "Hostname";
-		  		title-lines: 1;
-		  		child: Label hostname_label {
-		  		   styles ["dim-label"]
-		  		   margin-top: 6;
-		  		   margin-bottom: 6;
-		  		   ellipsize: end;
-		  		   lines: 5;
-		  		   justify: right;
-		  		   xalign: 1;
-		  		};
-		  	}
 		  }
-		}
-		}
 	}
-
+}
 }

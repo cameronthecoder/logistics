@@ -45,10 +45,10 @@ class DockerClient(GObject.Object):
             None,
             (),
         ),
-        "core_error": (
+        "monitor_status_changed": (
             GObject.SIGNAL_RUN_LAST,
             None,
-            (),
+            (bool,),
         ),
     }
 
@@ -62,7 +62,12 @@ class DockerClient(GObject.Object):
 
     def monitor_events(self):
         def on_response(source: Soup.Session, res: Gio.Task, data: Soup.Message):
-            input_stream: Gio.InputStream = source.send_finish(res)
+            input_stream = None
+            try:
+                input_stream: Gio.InputStream = source.send_finish(res)
+                self.emit("monitor_status_changed", True)
+            except Exception as e:
+                self.emit("monitor_status_changed", False)
 
             def on_callback(dataInputStream, res, user_data):
                 json_data = {}
@@ -70,27 +75,30 @@ class DockerClient(GObject.Object):
                     lineout, _ = dataInputStream.read_line_finish(res)
                     out = lineout.decode()
                     json_data = json.loads(out)
+                    print(json_data)
                 except Exception as e:
-                    self.emit('core_error')
-                if json_data["status"] == "delete":
-                    self.emit("image_deleted", json_data["id"])
-                elif json_data["status"] == "pull":
-                    self.emit("image_pull", json_data["id"])
+                    self.emit("monitor_status_changed", False)
+                if "status" in json_data:
+                    if json_data["status"] == "delete":
+                        self.emit("image_deleted", json_data["id"])
+                    elif json_data["status"] == "pull":
+                        self.emit("image_pull", json_data["id"])
+                    data_input_stream.read_line_async(
+                        GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
+                    )
+
+            if input_stream:
+                data_input_stream = Gio.DataInputStream.new(input_stream)
                 data_input_stream.read_line_async(
                     GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
                 )
-
-            data_input_stream = Gio.DataInputStream.new(input_stream)
-            data_input_stream.read_line_async(
-                GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
-            )
 
         message = Soup.Message.new("GET", "http://127.0.0.1:5555/events")
         self.session.send_async(
             message, GLib.PRIORITY_DEFAULT, self.cancellable, on_response, message
         )
 
-    def make_api_call(self, url, callback, core_call = False):
+    def make_api_call(self, url, callback, core_call=False):
         def on_response(session, result, message):
             data = success = error = None
             try:
@@ -100,7 +108,7 @@ class DockerClient(GObject.Object):
             except Exception as e:
                 logging.warning(e)
                 if core_call:
-                    self.emit("core_error")
+                    self.emit("monitor_status_changed", False)
                 error = e
 
             callback(success, error, data)
@@ -116,7 +124,9 @@ class DockerClient(GObject.Object):
 
     def get_containers(self, callback):
         self.emit("start_loading")
-        self.make_api_call("http://127.0.0.1:5555/containers/json?all=true", callback, True)
+        self.make_api_call(
+            "http://127.0.0.1:5555/containers/json?all=true", callback, True
+        )
 
-    def inspect_image(self, name, callback):
-        self.make_api_call(f"http://127.0.0.1:5555/images/{name}/json", callback)
+    def inspect_image(self, id, callback):
+        self.make_api_call(f"http://127.0.0.1:5555/images/{id}/json", callback)
