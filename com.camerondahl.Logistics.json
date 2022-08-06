@@ -1,7 +1,7 @@
 {
     "app-id" : "com.camerondahl.Logistics",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "master",
+    "runtime-version" : "42",
     "sdk" : "org.gnome.Sdk",
     "command" : "logistics",
     "finish-args" : [
@@ -32,6 +32,59 @@
                     "type" : "git",
                     "url" : "https://gitlab.gnome.org/jwestman/blueprint-compiler.git",
                     "branch" : "main"
+                }
+            ]
+        },
+    {
+      "name" : "libsass",
+      "config-opts" : [
+        "--disable-tests",
+        "--disable-static",
+        "--enable-shared"
+      ],
+      "cleanup" : ["*"],
+      "sources" : [
+        {
+          "type" : "git",
+          "url" : "https://github.com/sass/libsass.git",
+          "branch" : "master"
+        },
+        {
+          "type" : "script",
+          "dest-filename" : "autogen.sh",
+          "commands" : [
+            "autoreconf --force --install"
+          ]
+        }
+      ]
+    },
+      {
+      "name" : "sassc",
+      "cleanup" : ["*"],
+      "sources" : [
+        {
+          "type" : "git",
+          "url" : "https://github.com/sass/sassc.git",
+          "branch" : "master"
+        },
+        {
+          "type" : "script",
+          "dest-filename" : "autogen.sh",
+          "commands" : [
+            "autoreconf --force --install"
+          ]
+        }
+      ]
+    },
+        	{
+            "name" : "libadwaita",
+            "buildsystem" : "meson",
+            "builddir" : true,
+            "sources" : [
+                {
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/GNOME/libadwaita",
+                    "branch" : "1.2.beta"
                 }
             ]
         },
