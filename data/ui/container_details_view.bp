@@ -1,0 +1,61 @@
+using Gtk 4.0;
+using Adw 1;
+
+template ContainerDetailsView : Adw.Bin {
+  Adw.Leaflet leaflet {
+    can-navigate-back: true;
+    Box {
+      orientation: vertical;
+
+      Adw.HeaderBar {
+        show-end-title-buttons: bind leaflet.folded;
+
+        [start]
+        Button back_button {
+          icon-name: "go-previous-symbolic";
+          clicked => go_back();
+        }
+      }
+
+      Gtk.ListBox pages_list {
+        width-request: 300;
+        styles ["navigation-sidebar"]
+
+      }
+    }
+    Adw.LeafletPage leaflet_page {
+      navigatable: false;
+      child: Separator {
+      styles ["sidebar"]
+      };
+    }
+    Box {
+      orientation: vertical;
+      hexpand: true;
+
+
+      Adw.HeaderBar {
+        show-start-title-buttons: bind leaflet.folded;
+
+        Button {
+          visible: bind leaflet.folded;
+          clicked => go_back_sidebar();
+          icon-name: "go-previous-symbolic";
+        }
+
+        title-widget: Adw.WindowTitle content_title {
+          title: "Content";
+        };
+      }
+
+      Stack stack {
+        transition-type: crossfade;
+        hexpand: true;
+        vexpand: true;
+      }
+    }
+
+
+  }
+}
+  

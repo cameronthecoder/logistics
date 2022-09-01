@@ -1,0 +1,18 @@
+using Gtk 4.0;
+using Adw 1;
+using Vte 3.91;
+
+template ContainerLogsPage : Adw.PreferencesPage {
+  Adw.PreferencesGroup {
+    Gtk.ScrolledWindow {
+      hexpand: true;
+      vexpand: true;
+      styles ["l"]
+
+    Vte.Terminal logs {
+      styles ["logs"]
+
+    }
+    }
+  }
+}

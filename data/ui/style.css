@@ -1,4 +1,3 @@
-
 .bubble {
   border-radius: 50%;
   background: @insensitive_fg_color;
@@ -6,6 +5,28 @@
   min-width: 30px;
   min-height: 30px;
 }
+
+.size {
+  min-width: 100px;
+}
+.l {
+  border-radius: 10px;
+  padding: 10px;
+}
+.logs {
+  border-radius: 10px;
+  padding: 20px;
+  background: @card_bg_color;
+}
+
+.bubble.tag {
+  border-radius: 20px;
+  margin: 0 2px;
+  padding: 5px 13px;
+  background-color: alpha(@accent_bg_color, .06);
+  color: alpha(@accent_bg_color, 1.3);
+}
+
 
 .bubble.large {
   min-width: 86px;

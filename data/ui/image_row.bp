@@ -5,30 +5,23 @@ template ImageRow : Adw.ActionRow {
   activatable: true;
   focusable: true;
   selectable: true;
-  /* Translators: Fallback name for partitions that don't have a name. Can be followed by a number. */
-  title: "Unnamed Partition";
+  title: "Image Title";
+  subtitle: "test";
+  styles ["image-row"]
 
   [prefix]
   Label size {
     width-chars: 5;
     max-width-chars: 7;
-    xalign: 1;
+    valign: center;
     label: "10B";
-    styles ["dim-label"]
+    styles ["dim-label", "size"]
   }
 
-  Stack stack {
-    halign: end;
-    hhomogeneous: false;
-    vhomogeneous: false;
-
-    StackPage {
-      name: "ok";
-      child:
-      Image {
-        halign: end;
-        icon-name: "go-next-symbolic";
-      };
-    }
+  [suffix]
+  Label tag {
+    styles ["bubble", "caption", "tag"]
+    label: "tag";
+    valign: center;
   }
 }

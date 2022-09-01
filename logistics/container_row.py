@@ -19,23 +19,17 @@ import gi
 gi.require_version("Adw", "1")
 
 from gi.repository import Adw, Gtk
-from logistics.docker.utils import convert_size
+from logistics.docker.models.container import Container
 
+# @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/container_row.ui")
+class ContainerRow(Adw.ActionRow):
+    __gtype_name__ = "ContainerRow"
 
-@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_row.ui")
-class ImageRow(Adw.ActionRow):
-    __gtype_name__ = "ImageRow"
-
-    size = Gtk.Template.Child()
-    tag = Gtk.Template.Child()
-
-    def __init__(self, image, **kwargs):
+    def __init__(self, container: Container, **kwargs):
         super().__init__(**kwargs)
-        self.image = image
-        self.set_title(image.name)
-        self.set_subtitle(image.id[:25].replace("sha256:", ""))
-        self.tag.set_label(image.tags[0][0].split(":")[1])
-        self.size.set_label(convert_size(image.size))
+        self.container = container
+        self.set_title(container.name)
+        self.set_subtitle(container.id)
 
     def get_label(self):
         return self.get_title()

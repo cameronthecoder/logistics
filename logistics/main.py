@@ -62,9 +62,11 @@ class LogisticsApplication(Adw.Application):
             application_name="Logistics",
             application_icon="com.camerondahl.Logistics",
             developer_name="Cameron Dahl",
+            website="https://github.com/cameronthecoder/logistics",
             version="0.1",
-            developers=["Cameron Dahl"],
+            developers=["Cameron Dahl <cameron@camerondahl.com>"],
             copyright="© 2022 Cameron Dahl",
+            license_type=Gtk.License.GPL_3_0,
         )
         about.present()
 

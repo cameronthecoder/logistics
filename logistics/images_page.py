@@ -42,7 +42,6 @@ class ImagesPage(Adw.Bin):
         dialog.present()
 
     def set_window(self, window):
-        print(window)
         self.window = window
         self.window.client.get_images(self.on_images_response)
         self.window.client.connect("image_deleted", self.on_image_deleted)
@@ -65,7 +64,11 @@ class ImagesPage(Adw.Bin):
 
     def on_images_response(self, success, error, data):
         if data and success:
+            print(success)
+            print(error)
             self.label.set_visible(True)
             self.images_list.set_visible(True)
             [self.store.append(Image(image)) for image in data]
+        else:
+            print(error)
         self.window.spinner.stop()

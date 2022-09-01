@@ -14,7 +14,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import gi, logging, json
+import gi, logging, json, platform
 
 gi.require_version("Soup", "3.0")
 gi.require_version("Adw", "1")
@@ -45,10 +45,20 @@ class DockerClient(GObject.Object):
             None,
             (),
         ),
-        "monitor_status_changed": (
+        "message": (
             GObject.SIGNAL_RUN_LAST,
             None,
-            (bool,),
+            (GLib.Bytes,),
+        ),
+        "api_error": (
+            GObject.SIGNAL_RUN_LAST,
+            None,
+            (),
+        ),
+        "api_success": (
+            GObject.SIGNAL_RUN_LAST,
+            None,
+            (),
         ),
     }
 
@@ -65,27 +75,32 @@ class DockerClient(GObject.Object):
             input_stream = None
             try:
                 input_stream: Gio.InputStream = source.send_finish(res)
-                self.emit("monitor_status_changed", True)
+                self.emit("api_success")
             except Exception as e:
-                self.emit("monitor_status_changed", False)
+                logging.warning(e)
+                self.emit("api_error")
 
             def on_callback(dataInputStream, res, user_data):
                 json_data = {}
+                actions = {
+                    "delete": ["image_deleted", "id"],
+                    "pull": ["image_pull", "id"],
+                }
                 try:
                     lineout, _ = dataInputStream.read_line_finish(res)
                     out = lineout.decode()
                     json_data = json.loads(out)
-                    print(json_data)
                 except Exception as e:
-                    self.emit("monitor_status_changed", False)
-                if "status" in json_data:
-                    if json_data["status"] == "delete":
-                        self.emit("image_deleted", json_data["id"])
-                    elif json_data["status"] == "pull":
-                        self.emit("image_pull", json_data["id"])
-                    data_input_stream.read_line_async(
-                        GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
-                    )
+                    # self.cancellable.cancel()
+                    logging.warning(e)
+                    self.emit("api_error")
+                status = actions.get(json_data.get("status", None), None)
+                if status is not None:
+                    signal, data = actions.get(json_data["status"], None)
+                    self.emit(signal, json_data[data])
+                data_input_stream.read_line_async(
+                    GLib.PRIORITY_DEFAULT, self.cancellable, on_callback, None
+                )
 
             if input_stream:
                 data_input_stream = Gio.DataInputStream.new(input_stream)
@@ -108,7 +123,7 @@ class DockerClient(GObject.Object):
             except Exception as e:
                 logging.warning(e)
                 if core_call:
-                    self.emit("monitor_status_changed", False)
+                    self.emit("api_error")
                 error = e
 
             callback(success, error, data)
@@ -130,3 +145,39 @@ class DockerClient(GObject.Object):
 
     def inspect_image(self, id, callback):
         self.make_api_call(f"http://127.0.0.1:5555/images/{id}/json", callback)
+
+    def logs_ws_error(self, error):
+        logging.warning(e)
+        print("ws error")
+
+    def logs_ws_closed(self):
+        print("ws closed")
+        logging.info("ws closed")
+
+    def logs_ws_message(self, connection, msg_type, message):
+        self.emit("message", message)
+
+    def tail_logs(self, id):
+        def logs_ws_callback(session, result):
+            try:
+                resp = self.session.websocket_connect_finish(result)
+            except Exception as e:
+                logging.error(e)
+            resp.connect("message", self.logs_ws_message)
+            resp.connect("error", self.logs_ws_error)
+            resp.connect("closing", self.logs_ws_closed)
+            # for some reason an exception is required to receive messages?
+            resp.connect("pongg", self.logs_ws_closed)
+            resp.connect("closed", self.logs_ws_closed)
+            resp.set_keepalive_interval(5)
+
+        message = Soup.Message.new(
+            "GET",
+            f"ws://127.0.0.1:5555/containers/{id}/attach/ws?logs=true&stream=true",
+        )
+        self.session.websocket_connect_async(
+            message, None, [], GLib.PRIORITY_HIGH, self.cancellable, logs_ws_callback
+        )
+
+    def get_image_history(self, id, callback):
+        self.make_api_call(f"http://127.0.0.1:5555/images/{id}/history")

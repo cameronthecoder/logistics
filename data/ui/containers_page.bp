@@ -7,20 +7,24 @@ template ContainersPage : Adw.Bin {
 		Adw.Clamp {
 		  styles ["clamp"]
 
-
-		  Gtk.Box {
+		  		  Gtk.Box {
 		  	orientation: vertical;
 			spacing: 10;
 
 
-
-			Gtk.Label {
+			Gtk.Label label {
 				styles ["heading"]
 				xalign: 0;
 				margin-top: 20;
-				label: "Running";
+				label: "Containers";
 			}
-		  }
+
+		Gtk.ListBox containers_list {
+			styles ["boxed-list"]
+			valign: start;
+			selection-mode: none;
+		}
+		}
 		}
 	}
 }

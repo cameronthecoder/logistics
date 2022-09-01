@@ -1,4 +1,4 @@
-# images_row.py
+# container_logs_page.py
 #
 # Copyright 2022 Cameron Dahl
 #
@@ -17,25 +17,24 @@
 import gi
 
 gi.require_version("Adw", "1")
+gi.require_version("Vte", "3.91")
 
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gtk, Vte, Gdk
 from logistics.docker.utils import convert_size
 
 
-@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_row.ui")
-class ImageRow(Adw.ActionRow):
-    __gtype_name__ = "ImageRow"
+@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/container_logs_page.ui")
+class ContainerLogsPage(Adw.PreferencesPage):
+    __gtype_name__ = "ContainerLogsPage"
 
-    size = Gtk.Template.Child()
-    tag = Gtk.Template.Child()
+    logs: Vte.Terminal = Gtk.Template.Child()
 
-    def __init__(self, image, **kwargs):
+    def __init__(self, container_details_view, **kwargs):
         super().__init__(**kwargs)
-        self.image = image
-        self.set_title(image.name)
-        self.set_subtitle(image.id[:25].replace("sha256:", ""))
-        self.tag.set_label(image.tags[0][0].split(":")[1])
-        self.size.set_label(convert_size(image.size))
+        self.logs.set_color_background(
+            Gdk.RGBA(red=255.0, green=255.0, blue=255.0, alpha=0.08)
+        )
+        self.container_details_view = container_details_view
 
     def get_label(self):
         return self.get_title()

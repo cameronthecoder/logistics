@@ -1,4 +1,4 @@
-# images_row.py
+# image.py
 #
 # Copyright 2022 Cameron Dahl
 #
@@ -14,28 +14,19 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import gi
-
-gi.require_version("Adw", "1")
-
-from gi.repository import Adw, Gtk
-from logistics.docker.utils import convert_size
+from gi.repository import GObject, Gtk
 
 
-@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_row.ui")
-class ImageRow(Adw.ActionRow):
-    __gtype_name__ = "ImageRow"
+class Container(GObject.GObject):
+    __gtype_name__ = "Container"
+    id = GObject.Property(type=str)
+    name = GObject.Property(type=str)
 
-    size = Gtk.Template.Child()
-    tag = Gtk.Template.Child()
+    properties = {"id": "Id"}
 
-    def __init__(self, image, **kwargs):
+    def __init__(self, container_data, **kwargs):
         super().__init__(**kwargs)
-        self.image = image
-        self.set_title(image.name)
-        self.set_subtitle(image.id[:25].replace("sha256:", ""))
-        self.tag.set_label(image.tags[0][0].split(":")[1])
-        self.size.set_label(convert_size(image.size))
+        self.set_property("name", container_data["Names"][0])
 
-    def get_label(self):
-        return self.get_title()
+        for property, value in self.properties.items():
+            self.set_property(property, container_data.get(value))
