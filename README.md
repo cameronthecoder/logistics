@@ -1,10 +1,6 @@
 # Logistics
 Gtk/Python native Docker client for GNOME.
 
-## Features
-- List installed images
-- List containers on system
-
 ## Dependencies
 - PyGObject (gtk bindings for Python)
 - libadwaita (styling)
@@ -18,7 +14,10 @@ Gtk/Python native Docker client for GNOME.
 meson builddir --prefix=/usr/local
 sudo ninja -C builddir install
 ```
-
+## Design Credits
+This project uses some design elements from these projects:
+- [https://gitlab.gnome.org/World/Fragments](Fragments)
+- [https://gitlab.gnome.org/World/Shortwave](Shortwave)
 
 ## Contributions
 All contributions are welcome, no matter how big or small :) Major changes should be discussed with an issue or email first. 
