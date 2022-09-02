@@ -16,8 +16,8 @@ sudo ninja -C builddir install
 ```
 ## Design Credits
 This project uses some design elements from these projects:
-- [https://gitlab.gnome.org/World/Fragments](Fragments)
-- [https://gitlab.gnome.org/World/Shortwave](Shortwave)
+- [Fragments](https://gitlab.gnome.org/World/Fragments)
+- [Shortwave](https://gitlab.gnome.org/World/Shortwave)
 
 ## Contributions
 All contributions are welcome, no matter how big or small :) Major changes should be discussed with an issue or email first. 
