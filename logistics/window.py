@@ -44,25 +44,24 @@ class LogisticsWindow(Adw.ApplicationWindow):
         super().__init__(**kwargs)
         self.app = kwargs["application"]
         self.set_title("Logistics")
-        self.container_details_view = ContainerDetailsView(window=self)
-        self.app.create_action("main-view", self.show_main_view)
         self.client = DockerClient()
         self.client.connect("finished_loading", self.on_finished_loading)
         self.client.connect("start_loading", self.on_started_loading)
         self.client.connect("api_error", self.on_api_error)
         self.client.connect("api_success", self.on_api_success)
+        self.container_details_view = ContainerDetailsView(window=self)
+        self.app.create_action("main-view", self.show_main_view)
         self.images_page.set_window(self)
         self.containers_page.set_window(self)
         print(self.container_details_view)
         self.leaflet.append(self.container_details_view)
-        self.leaflet.get_page(self.container_details_view).set_navigatable(False)
 
     def on_finished_loading(self, _):
         self.spinner.stop()
 
     def show_container_details_view(self, container):
+        self.container_details_view.set_config(self, container)
         self.leaflet.set_visible_child(self.container_details_view)
-        self.container_details_view.set_container(self, container)
 
     def show_main_view(self, widget, _):
         self.leaflet.set_visible_child(self.main_view)

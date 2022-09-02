@@ -45,11 +45,6 @@ class DockerClient(GObject.Object):
             None,
             (),
         ),
-        "message": (
-            GObject.SIGNAL_RUN_LAST,
-            None,
-            (GLib.Bytes,),
-        ),
         "api_error": (
             GObject.SIGNAL_RUN_LAST,
             None,
@@ -146,37 +141,13 @@ class DockerClient(GObject.Object):
     def inspect_image(self, id, callback):
         self.make_api_call(f"http://127.0.0.1:5555/images/{id}/json", callback)
 
-    def logs_ws_error(self, error):
-        logging.warning(e)
-        print("ws error")
-
-    def logs_ws_closed(self):
-        print("ws closed")
-        logging.info("ws closed")
-
-    def logs_ws_message(self, connection, msg_type, message):
-        self.emit("message", message)
-
-    def tail_logs(self, id):
-        def logs_ws_callback(session, result):
-            try:
-                resp = self.session.websocket_connect_finish(result)
-            except Exception as e:
-                logging.error(e)
-            resp.connect("message", self.logs_ws_message)
-            resp.connect("error", self.logs_ws_error)
-            resp.connect("closing", self.logs_ws_closed)
-            # for some reason an exception is required to receive messages?
-            resp.connect("pongg", self.logs_ws_closed)
-            resp.connect("closed", self.logs_ws_closed)
-            resp.set_keepalive_interval(5)
-
+    def tail_logs(self, id, callback):
         message = Soup.Message.new(
             "GET",
             f"ws://127.0.0.1:5555/containers/{id}/attach/ws?logs=true&stream=true",
         )
         self.session.websocket_connect_async(
-            message, None, [], GLib.PRIORITY_HIGH, self.cancellable, logs_ws_callback
+            message, None, [], GLib.PRIORITY_HIGH, self.cancellable, callback
         )
 
     def get_image_history(self, id, callback):

@@ -1,7 +1,7 @@
 {
     "app-id" : "com.camerondahl.Logistics",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "42",
+    "runtime-version" : "master",
     "sdk" : "org.gnome.Sdk",
     "command" : "logistics",
     "finish-args" : [
@@ -94,18 +94,6 @@
         }
       ]
     },
-        	{
-            "name" : "libadwaita",
-            "buildsystem" : "meson",
-            "builddir" : true,
-            "sources" : [
-                {
-                    "type" : "git",
-                    "url" : "https://gitlab.gnome.org/GNOME/libadwaita",
-                    "branch" : "1.2.beta"
-                }
-            ]
-        },
         {
             "name" : "logistics",
             "builddir" : true,

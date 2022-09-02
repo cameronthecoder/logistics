@@ -2,8 +2,7 @@ using Gtk 4.0;
 using Adw 1;
 using Vte 3.91;
 
-template ContainerLogsPage : Adw.PreferencesPage {
-  Adw.PreferencesGroup {
+template ContainerLogsPage : Adw.Bin {
     Gtk.ScrolledWindow {
       hexpand: true;
       vexpand: true;
@@ -14,5 +13,4 @@ template ContainerLogsPage : Adw.PreferencesPage {
 
     }
     }
-  }
 }
