@@ -138,7 +138,6 @@
                 }
             ],
             "config-opts": [
-                "-Doffline=true",
                 "-Dbuildtype=debug"
             ]
         }
