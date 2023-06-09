@@ -1,4 +1,4 @@
-# images_row.py
+# container_row.py
 #
 # Copyright 2022 Cameron Dahl
 #
@@ -18,18 +18,22 @@ import gi
 
 gi.require_version("Adw", "1")
 
-from gi.repository import Adw, Gtk
-from logistics.docker.models.container import Container
+from gi.repository import Adw, Gtk, GObject
+from docker_gobject.container import Container
 
-# @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/container_row.ui")
+@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/container_row.ui")
 class ContainerRow(Adw.ActionRow):
     __gtype_name__ = "ContainerRow"
 
-    def __init__(self, container: Container, **kwargs):
+    container = GObject.property(type=Container)
+    def __init__(self, container_object: Container, **kwargs):
         super().__init__(**kwargs)
-        self.container = container
-        self.set_title(container.name)
-        self.set_subtitle(container.id)
+        self.set_property("container", container_object)
+        if self.container.state.state == "exited":
+            self.set_subtitle("Offline")
+        else:
+            self.set_subtitle("Online")
+        self.set_title(self.container.image)
 
     def get_label(self):
         return self.get_title()

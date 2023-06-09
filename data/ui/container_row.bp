@@ -1,0 +1,20 @@
+using Gtk 4.0;
+using Adw 1;
+
+template ContainerRow : Adw.ActionRow {
+  activatable: true;
+  focusable: true;
+  width-request: 200;
+  selectable: true;
+
+  [prefix]
+          Gtk.Image icon {
+	          styles ["bubble"]
+            icon-name: "network-server-symbolic";
+            pixel-size: 20;
+            height-request: 10;
+            valign: center;
+            width-request: 10;
+	  }
+
+}

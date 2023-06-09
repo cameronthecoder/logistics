@@ -3,15 +3,11 @@
   <gresource prefix="/com/camerondahl/Logistics">
     <file>ui/window.bp</file>
     <file>ui/window.ui</file>
-    <file>ui/images_page.ui</file>
-    <file>ui/images_page.bp</file>
-    <file>ui/image_row.bp</file>
-    <file>ui/image_dialog.bp</file>
-    <file>ui/image_dialog.ui</file>
-    <file>ui/image_row.ui</file>
+    <file>ui/container_row.ui</file>
+    <file>ui/container_row.bp</file>
     <file>ui/style.css</file>
-    <file>ui/containers_page.ui</file>
-    <file>ui/containers_page.bp</file>
+    <file>ui/preferences.ui</file>
+    <file>ui/preferences.bp</file>
     <file>ui/container_details_view.ui</file>
     <file>ui/container_details_view.bp</file>
     <file>ui/container_logs_page.ui</file>
@@ -20,6 +16,7 @@
     <file>icons/scalable/apps/refresh-symbolic.svg</file>
     <file>icons/scalable/apps/selection-opaque-symbolic.svg</file>
     <file>icons/scalable/apps/code-symbolic.svg</file>
+    <file>icons/scalable/apps/network-server-symbolic.svg</file>
     <file>icons/scalable/apps/about-symbolic.svg</file>
     <file>icons/scalable/apps/harddisk-symbolic.svg</file>
     <file>icons/scalable/apps/terminal-symbolic.svg</file>

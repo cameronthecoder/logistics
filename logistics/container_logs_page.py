@@ -21,7 +21,6 @@ gi.require_version("Vte", "3.91")
 gi.require_version("Soup", "3.0")
 
 from gi.repository import Adw, Gtk, Vte, Gdk, Soup
-from logistics.docker.utils import convert_size
 
 
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/container_logs_page.ui")
@@ -29,6 +28,7 @@ class ContainerLogsPage(Adw.Bin):
     __gtype_name__ = "ContainerLogsPage"
 
     logs: Vte.Terminal = Gtk.Template.Child()
+    
 
     def __init__(self, container_details_view, **kwargs):
         super().__init__(**kwargs)
@@ -38,7 +38,10 @@ class ContainerLogsPage(Adw.Bin):
         self.container_details_view = container_details_view
 
     def close_connection(self):
-        self.connection.close(Soup.WebsocketCloseCode.NORMAL)
+        try:
+            self.connection.close(Soup.WebsocketCloseCode.NORMAL)
+        except Exception as e:
+            logging.warning(e)
 
     def logs_ws_error(self, error):
         logging.warning(e)
@@ -54,14 +57,13 @@ class ContainerLogsPage(Adw.Bin):
     def logs_ws_callback(self, session, result):
         try:
             self.connection = session.websocket_connect_finish(result)
-            print(self.connection)
+            self.connection.connect("message", self.logs_ws_message)
+            self.connection.connect("error", self.logs_ws_error)
+            self.connection.connect("closing", self.logs_ws_closed)
+            self.connection.connect("closed", self.logs_ws_closed)
+            self.connection.set_keepalive_interval(5)
         except Exception as e:
             logging.error(e)
-        self.connection.connect("message", self.logs_ws_message)
-        self.connection.connect("error", self.logs_ws_error)
-        self.connection.connect("closing", self.logs_ws_closed)
-        self.connection.connect("closed", self.logs_ws_closed)
-        self.connection.set_keepalive_interval(5)
 
     def clear_logs(self):
         self.logs.reset(True, True)

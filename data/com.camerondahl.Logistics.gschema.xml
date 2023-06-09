@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="logistics">
-	<schema id="com.camerondahl.Logistics" path="/com/camerondahl/Logistics/">
-	</schema>
+  <enum id="com.camerondahl.Logistics.ConnectionType">
+    <value value="0" nick="socket" />
+    <value value="1" nick="tcp" />
+  </enum>
+  <schema id="com.camerondahl.Logistics" path="/com/camerondahl/Logistics/">
+      <key name="api-url" type="s">
+      <default>"http://127.0.0.1:2375"</default>
+          <summary>API URL used to connect to Docker daemon via TCP</summary>
+    </key>
+    <key name="socket-path" type="s">
+      <default>"/run/docker.sock"</default>
+          <summary>Socket path used to connect to Docker daemon via unix socket</summary>
+    </key>
+
+    <key name='connection-type' enum='com.camerondahl.Logistics.ConnectionType'>
+      <default>'socket'</default>
+      <summary>Method used to connect to the Docker daemon</summary>
+    </key>
+  </schema>
 </schemalist>

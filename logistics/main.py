@@ -24,6 +24,7 @@ gi.require_version("Adw", "1")
 
 from gi.repository import Gtk, Gio, Adw, GLib, Gdk
 from logistics.window import LogisticsWindow
+from logistics.preferences import PreferencesWindow
 
 
 class LogisticsApplication(Adw.Application):
@@ -73,6 +74,8 @@ class LogisticsApplication(Adw.Application):
     def on_preferences_action(self, widget, _):
         """Callback for the app.preferences action."""
         print("app.preferences action activated")
+        preferences = PreferencesWindow()
+        preferences.present()
 
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.

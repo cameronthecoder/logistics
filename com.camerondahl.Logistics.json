@@ -1,12 +1,19 @@
 {
-    "app-id" : "com.camerondahl.Logistics",
+    "id" : "com.camerondahl.Logistics",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "master",
     "sdk" : "org.gnome.Sdk",
     "command" : "logistics",
+    "build-options": {
+    	  "build-args": [
+      "--share=network"
+    ]
+    },
     "finish-args" : [
         "--share=network",
         "--share=ipc",
+        "--filesystem=/run/docker.sock",
+  	"--filesystem=xdg-run/docker.sock",
         "--socket=fallback-x11",
         "--device=dri",
         "--socket=wayland"
@@ -49,7 +56,7 @@
                 {
                     "type" : "git",
                     "url" : "https://gitlab.gnome.org/jwestman/blueprint-compiler.git",
-                    "branch" : "main"
+                    "tag" : "v0.6.0"
                 }
             ]
         },
@@ -93,7 +100,33 @@
           ]
         }
       ]
+      },
+
+    {
+  "name": "docker-gobject",
+  "buildsystem": "simple",
+  "build-options": {
+        "build-args": [
+            "--share=network"
+        ]
     },
+  "build-commands": [
+     "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"setuptools\"",
+    "pip3 install --prefix=${FLATPAK_DEST} \"docker_gobject-0.0.1.tar.gz\""
+  ],
+  "sources": [
+      {
+      "type": "archive",
+      "url": "https://files.pythonhosted.org/packages/03/20/630783571e76e5fa5f3e9f29398ca3ace377207b8196b54e0ffdf09f12c1/setuptools-67.8.0.tar.gz",
+      "sha256": "62642358adc77ffa87233bc4d2354c4b2682d214048f500964dbe760ccedf102"
+    },
+    {
+      "type": "file",
+      "path": "/home/cameron/docker_gobject_project/dist/docker_gobject-0.0.1.tar.gz",
+      "sha256": "74d9f7c8fac9d193e73165aa48d2eb92a6506969ee0357c3314f9bff7fff848e"
+    }
+  ]
+},
         {
             "name" : "logistics",
             "builddir" : true,
@@ -105,8 +138,5 @@
                 }
             ]
         }
-    ],
-    "build-options" : {
-        "env" : {        }
-    }
+    ]
 }
