@@ -21,10 +21,10 @@ import socket
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-gi.require_version("Soup", "3.0")
 
-from gi.repository import Gtk, Gio, Adw, Soup, GLib, Gdk
-from logistics.window import LogisticsWindow, AboutDialog
+from gi.repository import Gtk, Gio, Adw, GLib, Gdk
+from logistics.window import LogisticsWindow
+from logistics.preferences import PreferencesWindow
 
 
 class LogisticsApplication(Adw.Application):
@@ -49,9 +49,8 @@ class LogisticsApplication(Adw.Application):
         provider = Gtk.CssProvider.new()
         display = Gdk.Display.get_default()
         Gtk.StyleContext.add_provider_for_display(
-            display,
-            provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+            display, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+        )
         provider.load_from_resource("/com/camerondahl/Logistics/ui/style.css")
         if not win:
             win = LogisticsWindow(application=self)
@@ -59,12 +58,24 @@ class LogisticsApplication(Adw.Application):
 
     def on_about_action(self, widget, _):
         """Callback for the app.about action."""
-        about = AboutDialog(self.props.active_window)
+        about = Adw.AboutWindow(
+            transient_for=self.props.active_window,
+            application_name="Logistics",
+            application_icon="com.camerondahl.Logistics",
+            developer_name="Cameron Dahl",
+            website="https://github.com/cameronthecoder/logistics",
+            version="0.1",
+            developers=["Cameron Dahl <cameron@camerondahl.com>"],
+            copyright="© 2022 Cameron Dahl",
+            license_type=Gtk.License.GPL_3_0,
+        )
         about.present()
 
     def on_preferences_action(self, widget, _):
         """Callback for the app.preferences action."""
         print("app.preferences action activated")
+        preferences = PreferencesWindow()
+        preferences.present()
 
     def create_action(self, name, callback, shortcuts=None):
         """Add an application action.

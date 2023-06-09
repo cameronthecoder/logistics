@@ -1,0 +1,46 @@
+using Gtk 4.0;
+using Adw 1;
+
+template PreferencesWindow : Adw.PreferencesWindow {
+  Adw.PreferencesPage preferences {
+    Adw.PreferencesGroup {
+      title: "Docker Deamon";
+      description: "Settings for connecting to the docker daemon.";
+
+      Adw.ComboRow authentication_method  {
+        title: "Authentication Method";
+        model: StringList {
+          strings ["Unix socket", "TCP"]
+        };
+      }
+
+      Adw.EntryRow engine_api_url {
+        title: "Engine API URL";
+
+      }
+
+      Adw.EntryRow engine_socket_path {
+        title: "Engine socket path";
+
+      }
+
+      Adw.ActionRow {
+        title: "Test Connection";
+
+
+        Button test_btn {
+          styles ["suggested-action"]
+          label: "Test";
+          valign: center;
+        }
+
+        Label {
+          label: "Online";
+        }
+      }
+    }
+  }
+}
+
+
+

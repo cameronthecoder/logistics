@@ -14,12 +14,15 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import gi, json
 
+gi.require_version("Vte", "3.91")
 
-from gi.repository import Adw, Gtk
-from logistics.docker.client import DockerClient
-from logistics.containers_page import ContainersPage
-from logistics.images_page import ImagesPage
+from gi.repository import Adw, Gtk, Vte, Gio
+from logistics.container_row import ContainerRow
+from docker_gobject.authentication import AuthenticationMethod
+from docker_gobject.client import DockerClient
+from docker_gobject.container import Container
 
 
 @Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/window.ui")
@@ -27,49 +30,28 @@ class LogisticsWindow(Adw.ApplicationWindow):
     __gtype_name__ = "LogisticsWindow"
 
     leaflet = Gtk.Template.Child()
-    view_stack = Gtk.Template.Child()
-    images_page: ImagesPage = Gtk.Template.Child()
-    containers_page: ContainersPage = Gtk.Template.Child()
-    header_bar = Gtk.Template.Child()
-    status_page = Gtk.Template.Child()
-    spinner = Gtk.Template.Child()
-    refresh_button = Gtk.Template.Child()
-    title = Gtk.Template.Child()
+    home_listbox = Gtk.Template.Child()
+    store = Gio.ListStore.new(Container)
+    navigation_stack = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.app = kwargs["application"]
-        self.client = DockerClient()
-        self.client.connect("finished_loading", self.on_finished_loading)
-        self.client.connect("start_loading", self.on_started_loading)
-        self.client.connect("monitor_status_changed", self.on_monitor_status_changed)
-        self.images_page.set_window(self)
+        self.set_title("Logistics")
+        schema = 'com.camerondahl.Logistics'
+        self.settings = Gio.Settings.new(schema_id=schema)
+        connection_type = self.settings.get_string("connection-type")
+        api_url = self.settings.get_string("api-url")
+        socket_path = self.settings.get_string("socket-path")
+        print(socket_path)
+        if connection_type == "socket":
+            self.client = DockerClient(AuthenticationMethod.SOCKET, path=socket_path)
+        else:
+            self.client = DockerClient(AuthenticationMethod.TCP, api_url)
+        self.home_listbox.bind_model(self.store, lambda f: ContainerRow(f))
+        self.client.containers.list(self.on_containers_response)
 
-    def on_finished_loading(self, _):
-        self.spinner.stop()
-
-    @Gtk.Template.Callback()
-    def on_button_clicked(self, *args):
-        self.client.monitor_events()
-        self.images_page.get_images()
-
-    def on_started_loading(self, _):
-        self.spinner.start()
-
-    def on_monitor_status_changed(self, source, success):
-        self.view_stack.set_visible(success == True)
-        self.title.set_visible(success == True)
-        self.images_page.set_visible(success == True)
-        self.status_page.set_visible(success == False)
-
-
-class AboutDialog(Gtk.AboutDialog):
-    def __init__(self, parent):
-        Gtk.AboutDialog.__init__(self)
-        self.props.program_name = "logistics"
-        self.props.version = "0.1.0"
-        self.props.authors = ["Cameron Dahl"]
-        self.props.copyright = "2022 Cameron Dahl"
-        self.props.logo_icon_name = "com.camerondahl.Logistics"
-        self.props.modal = True
-        self.set_transient_for(parent)
+    def on_containers_response(self, success, error, data):
+        if success:
+            d = json.loads(data)
+            [self.store.append(Container.from_json(container)) for container in d]

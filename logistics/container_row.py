@@ -1,4 +1,4 @@
-# images_row.py
+# container_row.py
 #
 # Copyright 2022 Cameron Dahl
 #
@@ -14,34 +14,26 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-import gi, math
+import gi
 
-gi.require_version("Soup", "3.0")
 gi.require_version("Adw", "1")
 
-from gi.repository import Adw, Gtk
+from gi.repository import Adw, Gtk, GObject
+from docker_gobject.container import Container
 
+@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/container_row.ui")
+class ContainerRow(Adw.ActionRow):
+    __gtype_name__ = "ContainerRow"
 
-@Gtk.Template(resource_path="/com/camerondahl/Logistics/ui/image_row.ui")
-class ImageRow(Adw.ActionRow):
-    __gtype_name__ = "ImageRow"
-
-    size = Gtk.Template.Child()
-
-    def convert_size(self, size_bytes):
-        if size_bytes == 0:
-            return "0B"
-        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
-        i = int(math.floor(math.log(size_bytes, 1024)))
-        p = math.pow(1024, i)
-        s = round(size_bytes / p, 2)
-        return "%s %s" % (s, size_name[i])
-
-    def __init__(self, image, **kwargs):
+    container = GObject.property(type=Container)
+    def __init__(self, container_object: Container, **kwargs):
         super().__init__(**kwargs)
-        self.image = image
-        self.set_title(image.name)
-        self.size.set_label(self.convert_size(image.size))
+        self.set_property("container", container_object)
+        if self.container.state.state == "exited":
+            self.set_subtitle("Offline")
+        else:
+            self.set_subtitle("Online")
+        self.set_title(self.container.image)
 
     def get_label(self):
         return self.get_title()

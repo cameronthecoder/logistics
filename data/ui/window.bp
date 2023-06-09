@@ -2,98 +2,112 @@ using Gtk 4.0;
 using Adw 1;
 
 template LogisticsWindow : Adw.ApplicationWindow {
-  default-width: 800;
-  default-height: 600;
+  default-width: 1080;
+  default-height: 720;
 
-  Adw.Leaflet leaflet {
-  	can-navigate-back: true;
-  	can-unfold: false;
+  Box {
+    orientation: vertical;
 
-  	Gtk.Box main_view {
-  		orientation: vertical;
+       Adw.Leaflet leaflet {
+        vexpand: true;
 
-  		Adw.HeaderBar header_bar {
-				centering-policy: strict;
+        Adw.LeafletPage {
+          navigatable: false;
+          child: Box {
+            orientation: vertical;
 
-				[title]
-				Adw.ViewSwitcherTitle title {
-					stack: view_stack;
-				}
+             Adw.HeaderBar {
+                show-end-title-buttons: bind leaflet.folded;
 
-				[end]
-				Gtk.MenuButton {
-				  icon-name: "open-menu-symbolic";
-				  menu-model: primary_menu;
-				}
+                Button search_button {
+                  icon-name: "system-search-symbolic";
+                }
 
-				[end]
-				Gtk.Spinner spinner {
-				  spinning: true;
-				}
+                [title]
+                Adw.WindowTitle {
+                  title: "Logistics";
+                }
 
-				[end]
-				Gtk.Button refresh_button {
-				  clicked => on_button_clicked();
-				  icon-name: "refresh-symbolic";
-				}
-			}
+                [end]
+                MenuButton user {
+                  icon-name: "open-menu-symbolic";
+                  menu-model: primary_menu;
+                }
+                }
 
-			Gtk.Box {
-				orientation: vertical;
 
-				Adw.StatusPage status_page {
-				  visible: false;
-				  vexpand: true;
+                ScrolledWindow {
+                  hscrollbar-policy: never;
+                  ListBox home_listbox {
+                    width-request: 400;
+                    vexpand: true;
 
-				  icon-name: "network-error-symbolic";
-				  title: "Could not connect to Docker daemon";
-				  description: "Make sure that Docker is installed and running and the URI is set correctly in the Preferences window.";
-				  child: Adw.Clamp {
-				    styles ["clamp"]
-				      Gtk.Button cta_preferences {
-					styles ["suggested-action", "pill"]
-					label: "Preferences";
-					valign: center;
-					halign: center;
-				   }
-				};
+                    styles [
+                      "navigation-sidebar",
+                    ]
+
+                }
+              }
+            };
+          }
+
+
+          Adw.LeafletPage {
+            navigatable: false;
+            child: Separator {
+              orientation: vertical;
+            };
+          }
+
+
+           Adw.LeafletPage {
+            name: "main";
+            child: Box {
+              orientation: vertical;
+
+              Adw.ToastOverlay main {
+                hexpand: true;
+                vexpand: true;
+                visible: true;
+
+                Stack navigation_stack {
+                visible: false;
+                  transition-type: slide_left_right;
+                }
+
+                Adw.StatusPage status_page {
+				          visible: true;
+				          vexpand: true;
+
+				          icon-name: "network-error-symbolic";
+				          title: "Could not connect to Docker daemon";
+				          description: "Make sure that Docker is installed and running and the URI is set correctly in the Preferences window.";
+				          child: Adw.Clamp {
+				            styles ["clamp"]
+				              Gtk.Button cta_preferences {
+					        styles ["suggested-action", "pill"]
+					        label: "Preferences";
+					        valign: center;
+					        halign: center;
+				           }
+				      };
 			      }
 
-				Adw.ViewStack view_stack {
-					vexpand: true;
-					hexpand: true;
+              }
 
-					 Adw.ViewStackPage {
-						name: "containers";
-						title: "Containers";
-						icon-name: "grid-filled-symbolic";
 
-						child: .ContainersPage containers_page {};
-					}
-
-					Adw.ViewStackPage {
-						name: "images";
-						title: "Images";
-						icon-name: "selection-opaque";
-
-						child: .ImagesPage images_page {};
-					}
-				}
-
-				Adw.ViewSwitcherBar switcher_bar {
-					stack: view_stack;
-					reveal: bind title.title-visible;
-				}
-			}
-  	}
+            };
+          }
+          visible-child: main;
+        }
+    }
   }
-}
 
 menu primary_menu {
   section {
     item {
       label: _("Preferences");
-      action: "win.show-release-notes";
+      action: "app.preferences";
     }
     item {
       label: _("About Logistics");

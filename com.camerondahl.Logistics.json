@@ -1,12 +1,19 @@
 {
-    "app-id" : "com.camerondahl.Logistics",
+    "id" : "com.camerondahl.Logistics",
     "runtime" : "org.gnome.Platform",
-    "runtime-version" : "42",
+    "runtime-version" : "master",
     "sdk" : "org.gnome.Sdk",
     "command" : "logistics",
+    "build-options": {
+    	  "build-args": [
+      "--share=network"
+    ]
+    },
     "finish-args" : [
         "--share=network",
         "--share=ipc",
+        "--filesystem=/run/docker.sock",
+  	"--filesystem=xdg-run/docker.sock",
         "--socket=fallback-x11",
         "--device=dri",
         "--socket=wayland"
@@ -23,6 +30,24 @@
         "*.a"
     ],
     "modules" : [
+        {
+      "name": "vte",
+      "buildsystem": "meson",
+      "config-opts": [
+        "-Ddocs=false",
+        "-Dgtk3=false",
+        "-Dgtk4=true",
+        "-Dvapi=false",
+        "-Dglade=false"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://gitlab.gnome.org/GNOME/vte.git",
+          "commit": "b4abc09b0950e2b1593782116b7fa9fc2e7ffba1"
+        }
+      ]
+    },
 	{
             "name" : "blueprint-compiler",
             "buildsystem" : "meson",
@@ -31,10 +56,77 @@
                 {
                     "type" : "git",
                     "url" : "https://gitlab.gnome.org/jwestman/blueprint-compiler.git",
-                    "branch" : "main"
+                    "tag" : "v0.6.0"
                 }
             ]
         },
+    {
+      "name" : "libsass",
+      "config-opts" : [
+        "--disable-tests",
+        "--disable-static",
+        "--enable-shared"
+      ],
+      "cleanup" : ["*"],
+      "sources" : [
+        {
+          "type" : "git",
+          "url" : "https://github.com/sass/libsass.git",
+          "branch" : "master"
+        },
+        {
+          "type" : "script",
+          "dest-filename" : "autogen.sh",
+          "commands" : [
+            "autoreconf --force --install"
+          ]
+        }
+      ]
+    },
+      {
+      "name" : "sassc",
+      "cleanup" : ["*"],
+      "sources" : [
+        {
+          "type" : "git",
+          "url" : "https://github.com/sass/sassc.git",
+          "branch" : "master"
+        },
+        {
+          "type" : "script",
+          "dest-filename" : "autogen.sh",
+          "commands" : [
+            "autoreconf --force --install"
+          ]
+        }
+      ]
+      },
+
+    {
+  "name": "docker-gobject",
+  "buildsystem": "simple",
+  "build-options": {
+        "build-args": [
+            "--share=network"
+        ]
+    },
+  "build-commands": [
+     "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"setuptools\"",
+    "pip3 install --prefix=${FLATPAK_DEST} \"docker_gobject-0.0.1.tar.gz\""
+  ],
+  "sources": [
+      {
+      "type": "archive",
+      "url": "https://files.pythonhosted.org/packages/03/20/630783571e76e5fa5f3e9f29398ca3ace377207b8196b54e0ffdf09f12c1/setuptools-67.8.0.tar.gz",
+      "sha256": "62642358adc77ffa87233bc4d2354c4b2682d214048f500964dbe760ccedf102"
+    },
+    {
+      "type": "file",
+      "path": "/home/cameron/docker_gobject_project/dist/docker_gobject-0.0.1.tar.gz",
+      "sha256": "74d9f7c8fac9d193e73165aa48d2eb92a6506969ee0357c3314f9bff7fff848e"
+    }
+  ]
+},
         {
             "name" : "logistics",
             "builddir" : true,
@@ -46,8 +138,5 @@
                 }
             ]
         }
-    ],
-    "build-options" : {
-        "env" : {        }
-    }
+    ]
 }
