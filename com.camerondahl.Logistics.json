@@ -112,7 +112,7 @@
     },
   "build-commands": [
      "pip3 install --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"setuptools\"",
-    "pip3 install --prefix=${FLATPAK_DEST} \"docker_gobject-0.0.1.tar.gz\""
+    "pip3 install --prefix=${FLATPAK_DEST} \"docker_gobject\""
   ],
   "sources": [
       {
@@ -122,8 +122,8 @@
     },
     {
       "type": "file",
-      "path": "/home/cameron/docker_gobject_project/dist/docker_gobject-0.0.1.tar.gz",
-      "sha256": "74d9f7c8fac9d193e73165aa48d2eb92a6506969ee0357c3314f9bff7fff848e"
+      "url": "https://files.pythonhosted.org/packages/78/8d/7a137d2b6f003f3c5431c3e73d30321f5d4e5dffcf5bd069150e25003383/docker_gobject-0.0.2.tar.gz",
+      "sha256": "53b2f6359b7979485b33c5473a6393e82f712df07095218ced98ecc3df71c68c"
     }
   ]
 },
